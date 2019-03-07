@@ -101,9 +101,8 @@ bot.on("ready", function() {
 				icon_url: global.settings.roadmap.icon,
 				url: url,
 			},
-			footer: {
-				text: moment(post.created).format("HH:mm - MM/DD/YY"),
-			},
+			//footer: {text: moment(post.created).format("HH:mm - MM/DD/YY")},
+			timestamp: moment(post.created).toDate(),
 			color: 0x00B4EF,
 		}));
 	});
