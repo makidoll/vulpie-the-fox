@@ -6,8 +6,8 @@ module.exports = {
 		icon: "https://canny.io/images/cc546bc6e9e4c267452a433b426f6644.jpg",
 		mins: 10,
 		channels: {
-			"bugs": "553016215036100637",
-			"feature-requests": "553016215036100637",
+			"bugs": "433324910035730432",
+			"feature-requests": "433324910035730432",
 			"this-is-my-board": "553016215036100637",
 		},
 	},
