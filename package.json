@@ -1,18 +1,13 @@
 {
-  "name": "hifiBot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "^11.4.2",
-    "mitt": "^1.1.3",
-    "moment": "^2.24.0",
-    "request": "^2.88.0"
-  }
+	"name": "vulpie-the-fox",
+	"description": "🦊 A bot for the unofficial High Fidelity Discord",
+	"main": "app.js",
+	"author": "Makitsune",
+	"license": "GPLv3",
+	"dependencies": {
+		"discord.js": "^11.4.2",
+		"mitt": "^1.1.3",
+		"moment": "^2.24.0",
+		"request": "^2.88.0"
+	}
 }
