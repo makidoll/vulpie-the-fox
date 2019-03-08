@@ -29,7 +29,7 @@ var roadmap = (()=>{
 
 		function checkForNewPosts(dontEmit) {
 			recentBoards.forEach(board=>{
-				roadmap.getPosts(board.urlName).then(posts=>{
+				roadmap.getLatestPosts(board.urlName).then(posts=>{
 					if (posts[board._id] == undefined) return;
 					posts = posts[board._id];
 					//console.log(posts);

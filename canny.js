@@ -26,9 +26,9 @@ module.exports = function(url) {
 		});
 	});
 
-	this.getPosts = (boardUrl)=>new Promise((resolve,reject)=>{
-		getData(url+"/"+boardUrl).then(data=>{
-			return resolve(data.posts)
+	this.getLatestPosts = (boardUrl)=>new Promise((resolve,reject)=>{
+		getData(url+"/"+boardUrl+"?sort=new").then(data=>{
+			return resolve(data.posts);
 		}).catch(err=>{
 			return reject(err);
 		})
