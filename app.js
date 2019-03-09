@@ -1,67 +1,15 @@
-var Mitt = require("mitt");
-var Canny = require("./canny");
-var events = new Mitt();
 var Discord = require("discord.js");
+var Mitt = require("mitt");
+var events = new Mitt();
 var bot = new Discord.Client();
 var moment = require("moment");
 
 global.log = msg=>console.log("["+moment().format("YY-MM-DD HH:mm:ss")+"] "+msg);
 global.settings = require("./settings");
 
-// roadmap
-var roadmap = (()=>{
-	let recentPosts = {};
-	let recentBoards = [];
-	let roadmap = new Canny(global.settings.roadmap.url);
-	
-	roadmap.getBoards().then(boards=>{
-		//console.log(boards);
-		Object.keys(boards).forEach(key=>{
-			let board = boards[key];
-			recentBoards.push({
-				_id: board._id,
-				name: board.name,
-				urlName: board.urlName,
-			});
-
-			recentPosts[board._id] = [];
-		});
-
-		function checkForNewPosts(dontEmit) {
-			recentBoards.forEach(board=>{
-				roadmap.getLatestPosts(board.urlName).then(posts=>{
-					if (posts[board._id] == undefined) return;
-					posts = posts[board._id];
-					//console.log(posts);
-
-					Object.keys(posts).forEach(key=>{
-						let post = posts[key];
-
-						if (recentPosts[board._id].includes(post._id)) return;
-						recentPosts[board._id].push(post._id);
-
-						if (dontEmit) return;
-						events.emit("roadmap", {
-							_id: post._id,
-							title: post.title,
-							urlName: post.urlName,
-							details: post.details,
-							created: post.created,
-							board: board,
-						});
-					});
-
-				});
-			});
-		}
-
-		checkForNewPosts(true);
-		setInterval(checkForNewPosts, 1000*60*global.settings.roadmap.mins);
-
-	}).catch(err=>{
-		console.log(err);
-	});
-});
+// modules
+let canny = new (require("./canny"))(global.settings.canny.url);
+let snaps = new (require("./snaps"))();
 
 // discord
 bot.on("ready", function() {
@@ -82,13 +30,13 @@ bot.on("ready", function() {
 	}
 
 	// attach events
-	events.on("roadmap", post=>{
-		let chanID = global.settings.roadmap.channels[post.board.urlName];
+	events.on("canny.newPost", post=>{
+		let chanID = global.settings.canny.channels[post.board.urlName];
 		if (chanID == undefined) return;
 		let chan = guild.channels.get(chanID);
 		if (chan == undefined) return;
 
-		let url = global.settings.roadmap.url+"/"+post.board.urlName+"/p/"+post.urlName;
+		let url = global.settings.canny.url+"/"+post.board.urlName+"/p/"+post.urlName;
 
 		//console.log(post);
 		global.log("New canny post: "+post.board.name);
@@ -98,7 +46,7 @@ bot.on("ready", function() {
 			url: url,
 			author: {
 				name: post.board.name,
-				icon_url: global.settings.roadmap.icon,
+				icon_url: global.settings.canny.icon,
 				url: url,
 			},
 			//footer: {text: moment(post.created).format("HH:mm - MM/DD/YY")},
@@ -107,8 +55,41 @@ bot.on("ready", function() {
 		}));
 	});
 
-	// init modules
-	roadmap();
+	events.on("hifi.newSnap", snap=>{
+		let chanID = global.settings.snaps.channel;
+		let chan = guild.channels.get(chanID);
+		if (chan == undefined) return;
+
+		// let snap = {
+		// 	id: 68055,
+		// 	username: "Monoglu",
+		// 	placeName: "RoguesGallery",
+		// 	path: "/-16.294,-11.516,64.4308/0,-0.384243,0,0.923232",
+		// 	imageUrl: "https://hifi-metaverse.s3-us-west-1.amazonaws.com/snapshots/images/hifi-snap-original-65904.gif",
+		// 	avatarUrl: "https://hifi-metaverse.s3-us-west-1.amazonaws.com/images/users/previews/c56/be3/8b-/hero/hifi-user-c56be38b-49b6-44f9-9627-1cd74a161119.png",
+		// }
+
+		global.log("New hifi snap: "+snap.username);
+		chan.send(new Discord.RichEmbed({
+			title: "Snapshot at "+snap.placeName,
+			//description: post.details,
+			url: "https://highfidelity.com/user_stories/"+snap.id,
+			author: {
+				name: snap.username,
+				icon_url: snap.avatarUrl,
+				url: "http://highfidelity.com/users/"+snap.username,
+			},
+			image: {url: snap.imageUrl},
+			//thumbnail: {url: snap.avatarUrl},
+			//footer: {text: moment(post.created).format("HH:mm - MM/DD/YY")},
+			//timestamp: moment().toDate(),
+			color: 0x00B4EF,
+		}));
+	});
+
+	// init listeners
+	canny.listenOnNewPosts(events); // canny.newPost
+	snaps.listenOnNewSnaps(events); // hifi.newSnap
 });
 
 bot.login(global.settings.token);
