@@ -15,9 +15,13 @@ module.exports = function(url) {
 
 	this.getAvatarUrl = (username)=>new Promise((resolve,reject)=>{
 		request("https://highfidelity.com/users/"+username, (err,res,body)=>{
-			if (err) return reject(err);
-			let avatarUrl = (/<img class=['"]users-img['"] src="(.*?)[?'"]/gi.exec(body))[1];
-			return resolve(avatarUrl);
+			if (err) return reject(undefined);
+			let avatarUrl = (/<img class=['"]users-img['"] src="(.*?)[?'"]/gi.exec(body));
+			if (avatarUrl==null) reject(undefined);
+
+			avatarUrl = avatarUrl[1];
+			if (avatarUrl.substring(0,8)=="/assets/") avatarUrl = "https://highfidelity.com"+avatarUrl;
+			return resolve(avatarUrl[1]);
 		});
 	});
 
