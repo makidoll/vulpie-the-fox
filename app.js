@@ -15,6 +15,8 @@ let snaps = new (require("./snaps"))();
 bot.on("ready", function() {
 	global.log("Bot is online!");
 	bot.user.setPresence({game: {name: "with her tail", type: 0}});
+	global.log("\nhttps://discordapp.com/oauth2/authorize?client_id="+bot.user.id+"&scope=bot\n");
+
 
 	// print joined guilds
 	// let guilds = bot.guilds.array();
