@@ -14,13 +14,13 @@ module.exports = function(url) {
 	});
 
 	this.getAvatarUrl = (username)=>new Promise((resolve,reject)=>{
-		request("https://highfidelity.com/users/"+username, (err,res,body)=>{
+		request("https://metaverse.highfidelity.com/users/"+username, (err,res,body)=>{
 			if (err) return reject(undefined);
 			let avatarUrl = (/<img class=['"]users-img['"] src="(.*?)[?'"]/gi.exec(body));
 			if (avatarUrl==null) reject(undefined);
 
 			avatarUrl = avatarUrl[1];
-			if (avatarUrl.substring(0,8)=="/assets/") avatarUrl = "https://highfidelity.com"+avatarUrl;
+			if (avatarUrl.substring(0,8)=="/assets/") avatarUrl = "https://metaverse.highfidelity.com"+avatarUrl;
 			return resolve(avatarUrl[1]);
 		});
 	});
@@ -38,7 +38,7 @@ module.exports = function(url) {
 
 					let avatarUrl = undefined;
 					try { avatarUrl = await this.getAvatarUrl(snap.username); }
-					catch(err) { avatarUrl = "https://highfidelity.com/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png"; }
+					catch(err) { avatarUrl = "https://metaverse.highfidelity.com/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png"; }
 
 					events.emit("hifi.newSnap", {
 						id: snap.id,
