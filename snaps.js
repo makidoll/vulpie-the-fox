@@ -1,6 +1,6 @@
 var request = require("request");
 
-module.exports = function(url) {
+module.exports = function() {
 	this.getLatestSnaps = ()=>new Promise((resolve,reject)=>{
 		request("https://metaverse.highfidelity.com/api/v1/user_stories?include_actions=snapshot&per_page=10", (err,res,body)=>{
 			if (err) return reject(err);
@@ -13,15 +13,19 @@ module.exports = function(url) {
 		});
 	});
 
+	var defaultAvatar = "https://metaverse.highfidelity.com/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png";
 	this.getAvatarUrl = (username)=>new Promise((resolve,reject)=>{
 		request("https://metaverse.highfidelity.com/users/"+username, (err,res,body)=>{
-			if (err) return reject(undefined);
+			if (err) return resolve(defaultAvatar);
 			let avatarUrl = (/<img class=['"]users-img['"] src="(.*?)[?'"]/gi.exec(body));
-			if (avatarUrl==null) reject(undefined);
+			
+			if (avatarUrl==null) return resolve(defaultAvatar);
+			if (avatarUrl[1]==undefined) return resolve(defaultAvatar);
 
 			avatarUrl = avatarUrl[1];
-			if (avatarUrl.substring(0,8)=="/assets/") avatarUrl = "https://metaverse.highfidelity.com"+avatarUrl;
-			return resolve(avatarUrl[1]);
+			if (avatarUrl.substring(0,8)=="/assets/") return resolve(defaultAvatar);
+
+			return resolve(avatarUrl);
 		});
 	});
 
@@ -36,9 +40,7 @@ module.exports = function(url) {
 
 					if (dontEmit) return;
 
-					let avatarUrl = undefined;
-					try { avatarUrl = await this.getAvatarUrl(snap.username); }
-					catch(err) { avatarUrl = "https://metaverse.highfidelity.com/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png"; }
+					let avatarUrl = await this.getAvatarUrl(snap.username);
 
 					events.emit("hifi.newSnap", {
 						id: snap.id,

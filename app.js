@@ -21,13 +21,20 @@ bot.on("ready", function() {
 	// Object.keys(guilds).forEach(key=>{
 	// 	console.log("\t"+guilds[key].name+" ("+guilds[key].id+")");
 	// }); console.log("");
-	let guild = bot.guilds.get("250331140991221760");
+	let guild = bot.guilds.get(global.settings.server);
 	if (guild) {
 		global.log("Server found: "+guild.name+" ("+guild.id+")");
 	} else {
 		global.log("Server not found!");
 		process.exit(1);
 	}
+
+	// bot.guilds.get("563485021722247179").channels.get("563485021722247183").fetchMessage("564261084865888257").then(msg=>{
+	// 	let emoji = msg.reactions.array()[0].emoji;
+	// 	console.log(emoji)
+	// 	msg.react(emoji).then(()=>console("Reacted!")).catch(err=>console.log);
+		
+	// });
 
 	// attach events
 	events.on("canny.newPost", post=>{
