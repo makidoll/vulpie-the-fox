@@ -16,7 +16,8 @@ module.exports = {
 		},
 	},
 	snaps: {
-		//channel: "553016215036100637", // bot playground
+		url: "https://metaverse.highfidelity.com",
 		channel: "563497640667512834", // media
+		//channel: "553016215036100637", // bot playground
 	},
 };

@@ -1,4 +1,4 @@
-var snaps = new (require("../snaps.js"))();
+var snaps = new (require("../snaps.js"))("https://metaverse.highfidelity.com");
 
 (async ()=>{
 

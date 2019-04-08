@@ -9,14 +9,12 @@ global.settings = require("./settings");
 
 // modules
 let canny = new (require("./canny"))(global.settings.canny.url);
-let snaps = new (require("./snaps"))();
+let snaps = new (require("./snaps"))(global.settings.snaps.url);
 
 // discord
 bot.on("ready", function() {
 	global.log("Bot is online!");
 	bot.user.setPresence({game: {name: "with her tail", type: 0}});
-	global.log("\nhttps://discordapp.com/oauth2/authorize?client_id="+bot.user.id+"&scope=bot\n");
-
 
 	// print joined guilds
 	// let guilds = bot.guilds.array();
@@ -82,11 +80,11 @@ bot.on("ready", function() {
 		chan.send(new Discord.RichEmbed({
 			title: "Snapshot at "+snap.placeName,
 			//description: post.details,
-			url: "https://highfidelity.com/user_stories/"+snap.id,
+			url: snaps.metaverseUrl+"/user_stories/"+snap.id,
 			author: {
 				name: snap.username,
 				icon_url: snap.avatarUrl,
-				url: "http://highfidelity.com/users/"+snap.username,
+				url: snaps.metaverseUrl+"/users/"+snap.username,
 			},
 			image: {url: snap.imageUrl},
 			//thumbnail: {url: snap.avatarUrl},

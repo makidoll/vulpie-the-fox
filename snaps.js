@@ -1,8 +1,10 @@
 var request = require("request");
 
-module.exports = function() {
+module.exports = function(metaverseUrl) {
+	this.metaverseUrl = metaverseUrl;
+
 	this.getLatestSnaps = ()=>new Promise((resolve,reject)=>{
-		request("https://metaverse.highfidelity.com/api/v1/user_stories?include_actions=snapshot&per_page=10", (err,res,body)=>{
+		request(this.metaverseUrl+"/api/v1/user_stories?include_actions=snapshot&per_page=10", (err,res,body)=>{
 			if (err) return reject(err);
 			
 			let json = undefined;
@@ -13,9 +15,9 @@ module.exports = function() {
 		});
 	});
 
-	var defaultAvatar = "https://metaverse.highfidelity.com/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png";
+	var defaultAvatar = this.metaverseUrl+"/assets/users/hero-default-user-d5a4727d1ad1fb9d9cd26383e26e2697dfd9f4d2f3f81da86c4990771ca8810d.png";
 	this.getAvatarUrl = (username)=>new Promise((resolve,reject)=>{
-		request("https://metaverse.highfidelity.com/users/"+username, (err,res,body)=>{
+		request(this.metaverseUrl+"/users/"+username, (err,res,body)=>{
 			if (err) return resolve(defaultAvatar);
 			let avatarUrl = (/<img class=['"]users-img['"] src="(.*?)[?'"]/gi.exec(body));
 			
